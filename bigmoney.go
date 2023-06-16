@@ -31,13 +31,9 @@ func main() {
 		fmt.Printf("Current bet: $%v\n", bet)
 		fmt.Printf("%v percent complete\n", float64(i)/float64(bettingCycles)*100)
 
-		streakToGoBroke := int(math.Floor(math.Log2(float64(money))))
-		if losingStreak >= streakToGoBroke {
-			fmt.Println("You will go broke if you lose this round!")
-		} else {
-			fmt.Printf("Number of times to lose in a row to go broke with current money: %v/%v\n", losingStreak, streakToGoBroke)
-			fmt.Printf("Odds of going broke: %v%%\n", math.Pow(0.5, float64(streakToGoBroke-losingStreak))*100)
-		}
+		streakToGoBroke := int(math.Ceil(math.Log2(float64(money))))
+		fmt.Printf("Number of times to lose in a row to go broke with current money: %v/%v\n", losingStreak, streakToGoBroke)
+		fmt.Printf("Odds of going broke: %v%%\n", math.Pow(0.5, float64(streakToGoBroke-losingStreak))*100)
 
 		if bet > highestBet {
 			highestBet = bet
@@ -51,15 +47,15 @@ func main() {
 		} else {
 			money -= bet
 			fmt.Printf("Lost $%v\nTotal: $%v\n\n", bet, money)
+			losingStreak++
+			if losingStreak > highestLosingStreak {
+				highestLosingStreak = losingStreak
+			}
 			if money <= 0 || money < bet*2 {
 				fmt.Printf("You're broke!")
 				break
 			}
 
-			losingStreak++
-			if losingStreak > highestLosingStreak {
-				highestLosingStreak = losingStreak
-			}
 			bet *= 2
 
 		}
@@ -78,12 +74,12 @@ func main() {
 	fmt.Printf("Highest losing streak: %v\n", highestLosingStreak)
 	fmt.Printf(
 		"Number of times to lose in a row to go broke from the initial money: %v\n",
-		math.Floor(math.Log2(float64(startingMoney))),
+		math.Ceil(math.Log2(float64(startingMoney))),
 	)
 	if madeMoney {
 		fmt.Printf(
 			"Number of times to lose in a row to go broke from your current money: %v\n",
-			math.Floor(math.Log2(float64(money))),
+			math.Ceil(math.Log2(float64(money))),
 		)
 	}
 	fmt.Printf("Highest bet: $%v\n", highestBet)
